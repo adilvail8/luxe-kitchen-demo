@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Цены для конструктора кухни | LUXE INTERIOR</title>
+<style>
+:root{--bg:#f6f3ee;--card:#fff;--line:#e3ddd2;--text:#25221d;--muted:#7b7469;--gold:#a8844f;--ok:#2e7d4f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 140px}
+h1{font-size:24px;margin:8px 0 6px}
+.lead{color:var(--muted);margin:0 0 18px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.box h2{font-size:17px;margin:0 0 4px}
+.box .hint{color:var(--muted);font-size:14px;margin:0 0 12px}
+.f{display:grid;grid-template-columns:1fr 180px;gap:6px 12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.f:first-of-type{border-top:0}
+.f label{font-size:15px}
+.f small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.inp{display:flex;align-items:center;gap:6px}
+.inp input{width:100%;min-width:0;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font-size:17px;background:#fffdf9;text-align:right}
+.inp input:focus{outline:2px solid var(--gold);border-color:var(--gold)}
+.inp input.ok{border-color:#9ccaae;background:#f4fbf6}
+.inp span{color:var(--muted);font-size:13px;white-space:nowrap;min-width:34px}
+textarea,.txt{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fffdf9}
+.q{padding:8px 0}
+.q b{display:block;font-weight:600;margin-bottom:6px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));z-index:5}
+.bar-in{max-width:760px;margin:0 auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.prog{flex:1;min-width:120px;font-size:14px;color:var(--muted)}
+.prog i{display:block;height:5px;border-radius:5px;background:var(--line);margin-top:5px;overflow:hidden}
+.prog i b{display:block;height:100%;background:var(--ok);width:0;transition:width .2s}
+button{font:inherit;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 16px;cursor:pointer}
+button.main{background:#25d366;border-color:#25d366;color:#08331a;font-weight:700}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#25221d;color:#fff;padding:10px 18px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:9}
+.toast.on{opacity:1}
+input::placeholder{font-size:14px;color:#b3ab9c}
+@media (max-width:480px){.f{grid-template-columns:1fr}.inp input{text-align:left}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Цены для 3D-конструктора кухни</h1>
+  <p class="lead">Укажите ваши цены в тенге. Это нужно, чтобы конструктор показывал клиентам честную примерную цену. Что не знаете или что считаете по-другому, оставьте пустым и напишите в комментарии внизу. Всё сохраняется на этом устройстве, можно заполнять по частям.</p>
+  <div id="form"></div>
+
+  <div class="box">
+    <h2>Несколько вопросов</h2>
+    <div class="q"><b>Показывать клиенту цену до замера?</b>
+      <label><input type="radio" name="q1" value="да"> да, диапазон</label> &nbsp;
+      <label><input type="radio" name="q1" value="нет"> нет, только после замера</label></div>
+    <div class="q"><b>Что в вашей комплектации по умолчанию?</b>
+      <input class="txt" id="q2" placeholder="Например: корпус ЛДСП Egger, фурнитура Blum, фасады крашеный МДФ"></div>
+    <div class="q"><b>Нужна ли клиенту смета в PDF?</b>
+      <label><input type="radio" name="q3" value="да"> да</label> &nbsp;
+      <label><input type="radio" name="q3" value="нет"> нет</label></div>
+    <div class="q"><b>Ваше имя</b><input class="txt" id="who" placeholder="Александр"></div>
+    <div class="q"><b>Комментарий</b><textarea id="note" rows="3" placeholder="Что считается иначе, чего не хватает в списке"></textarea></div>
+  </div>
+  <p class="note">В цену не входят техника, мойка и смеситель. Точная цена для клиента определяется после замера и 3D-проекта.</p>
+</div>
+
+<div class="bar"><div class="bar-in">
+  <div class="prog"><span id="progTxt">Заполнено 0 из 0</span><i><b id="progBar"></b></i></div>
+  <button id="copy">Скопировать</button>
+  <button id="dl">Скачать файл</button>
+  <button class="main" id="wa">Отправить в WhatsApp</button>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+// kind: num (тенге или другая единица как указана), pct (проценты; в файл пишется как коэффициент или доля)
+const S = [
+ { t: "Корпуса шкафов", h: "Цена за погонный метр шкафа без фасадов, столешницы и ручек. Только корпус.", f: [
+  ["carcassBaseM", "Нижние шкафы, корпус", "₸ за п.м.", "48000"],
+  ["carcassUpperM", "Верхние шкафы, корпус", "₸ за п.м.", "34000"],
+  ["carcassGreyMult", "Доплата за серый корпус вместо белого", "% к цене корпуса", "4", "pct1"],
+  ["upperCeilingMult", "Доплата за верхние шкафы «до потолка» вместо стандартных", "% к цене верхних", "8", "pct1"],
+  ["tallEach", "Колонна под технику (холодильник или духовку)", "₸ за штуку", "95000"],
+  ["islandM", "Остров, корпус", "₸ за п.м.", "62000"]]},
+ { t: "Фасады", h: "Цена за квадратный метр фасадов. Площадь считается по размерам шкафов.", f: [
+  ["facadeM2.ldsp", "ЛДСП Egger", "₸ за м²", "38000"],
+  ["facadeM2.film", "МДФ в плёнке", "₸ за м²", "52000"],
+  ["facadeM2.mdf_paint", "Крашеный МДФ", "₸ за м²", "72000"],
+  ["facadeM2.veneer", "Шпон", "₸ за м²", "105000"],
+  ["facadeM2.massiv", "Массив дерева", "₸ за м²", "165000"]]},
+ { t: "Столешница", h: "Цена за погонный метр готовой столешницы (стандартная глубина 60 см).", f: [
+  ["counterM.hpl", "Ламинат HPL", "₸ за п.м.", "35000"],
+  ["counterM.quartz", "Кварцевый агломерат (Grandex и аналоги)", "₸ за п.м.", "70000"],
+  ["counterM.acrylic", "Акриловый камень", "₸ за п.м.", "85000"],
+  ["counterM.natural", "Натуральный камень", "₸ за п.м.", "150000"]]},
+ { t: "Фартук", h: "Цена за квадратный метр, с материалом и монтажом.", f: [
+  ["backsplashM2.slab", "Плита из того же камня, что столешница", "₸ за м²", "45000"],
+  ["backsplashM2.tile", "Плитка кабанчик", "₸ за м²", "18000"],
+  ["backsplashM2.glass", "Стекло", "₸ за м²", "32000"]]},
+ { t: "Фурнитура и системы хранения", h: "Blum: петли, направляющие, доводчики. Цена на один шкаф.", f: [
+  ["hardwareModule.blum_std", "Blum, базовая серия", "₸ за шкаф", "6000"],
+  ["hardwareModule.blum_premium", "Blum, премиум серия", "₸ за шкаф", "11000"],
+  ["storageExtraDrawer", "Расширенное хранение (органайзеры), доплата за ящик", "₸ за ящик", "4500"]]},
+ { t: "Ручки и профили", h: "Цена одной ручки или профиля на один фасад.", f: [
+  ["handleEach.profile", "Профиль (врезная ручка)", "₸ за фасад", "4000"],
+  ["handleEach.push", "Без ручек (push-to-open)", "₸ за фасад", "7500"],
+  ["handleEach.bar", "Скоба", "₸ за фасад", "3500"],
+  ["handleEach.rail", "Рейлинг", "₸ за фасад", "2500"],
+  ["handleColorMult.black", "Цвет ручек: чёрный, доплата", "% к цене ручки", "0", "pct1"],
+  ["handleColorMult.steel", "Цвет ручек: сталь, доплата", "% к цене ручки", "0", "pct1"],
+  ["handleColorMult.gold", "Цвет ручек: золото, доплата", "% к цене ручки", "15", "pct1"],
+  ["handleColorMult.bronze", "Цвет ручек: бронза, доплата", "% к цене ручки", "10", "pct1"]]},
+ { t: "Опции и вытяжка", h: "Остров и подсветку клиент включает кнопкой, рядом показывается цена этой опции.", f: [
+  ["ledPerM", "Подсветка под верхними шкафами", "₸ за п.м.", "9000"],
+  ["dryerEach", "Сушилка в верхнем шкафу", "₸ за штуку", "18000"],
+  ["hoodChimney", "Короб купольной вытяжки", "₸", "55000"],
+  ["hoodBuilt", "Корпус встроенной вытяжки", "₸", "40000"]]},
+ { t: "Монтаж, доставка и округление", h: "", f: [
+  ["montagePct", "Монтаж", "% от суммы за кухню", "7", "pct0"],
+  ["delivery", "Доставка и подъём", "₸ за заказ", "25000"],
+  ["range", "Разброс в цене, который показывать клиенту (диапазон ± )", "%", "7", "pct0"],
+  ["roundTo", "Округлять итог до", "₸", "5000"]]}
+];
+const KEY = "luxe_prices_form_v1";
+let saved = {}; try { saved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch {}
+const $ = (s) => document.querySelector(s);
+const fmt = (v) => v === "" || v == null ? "" : Number(v).toLocaleString("ru-RU");
+const form = $("#form");
+let total = 0;
+for (const sec of S) {
+  const box = document.createElement("div"); box.className = "box";
+  box.innerHTML = `<h2>${sec.t}</h2>${sec.h ? `<p class="hint">${sec.h}</p>` : ""}`;
+  for (const [key, label, unit, ex] of sec.f) {
+    total++;
+    const row = document.createElement("div"); row.className = "f";
+    row.innerHTML = `<label for="f_${key}">${label}<small>${unit}</small></label><div class="inp"><input id="f_${key}" data-k="${key}" inputmode="decimal" autocomplete="off" placeholder="напр. ${fmt(ex)}"><span>${unit.startsWith("₸") ? "₸" : "%"}</span></div>`;
+    box.append(row);
+  }
+  form.append(box);
+}
+const inputs = [...document.querySelectorAll("input[data-k]")];
+const meta = { who: $("#who"), note: $("#note"), q2: $("#q2") };
+for (const i of inputs) {
+  if (saved[i.dataset.k] != null) i.value = saved[i.dataset.k];
+  i.addEventListener("input", () => { const raw = i.value.replace(/[^\d.,]/g, "").replace(",", "."); const n = raw === "" ? "" : raw; i.value = n === "" ? "" : (n.includes(".") ? n : Number(n).toLocaleString("ru-RU")); persist(); });
+}
+for (const [k, e] of Object.entries(meta)) { if (saved["_" + k]) e.value = saved["_" + k]; e.addEventListener("input", persist); }
+for (const r of document.querySelectorAll("input[type=radio]")) { if (saved["_" + r.name] === r.value) r.checked = true; r.addEventListener("change", persist); }
+const num = (s) => { const v = String(s).replace(/\s| /g, "").replace(",", "."); return v === "" || isNaN(Number(v)) ? null : Number(v); };
+function persist() {
+  const o = {}; inputs.forEach((i) => { if (i.value !== "") o[i.dataset.k] = i.value; });
+  for (const [k, e] of Object.entries(meta)) o["_" + k] = e.value;
+  for (const r of document.querySelectorAll("input[type=radio]:checked")) o["_" + r.name] = r.value;
+  try { localStorage.setItem(KEY, JSON.stringify(o)); } catch {}
+  progress();
+}
+function progress() {
+  const n = inputs.filter((i) => num(i.value) != null).length;
+  inputs.forEach((i) => i.classList.toggle("ok", num(i.value) != null));
+  $("#progTxt").textContent = `Заполнено ${n} из ${total}`; $("#progBar").style.width = (n / total * 100) + "%";
+}
+function collect() {
+  const json = {}, lines = [], missing = [];
+  for (const sec of S) {
+    lines.push("", sec.t.toUpperCase());
+    for (const [key, label, unit, , kind] of sec.f) {
+      const i = document.getElementById("f_" + key), v = num(i.value);
+      if (v == null) { missing.push(label); lines.push(`${label}: не заполнено`); continue; }
+      lines.push(`${label}: ${Number(v).toLocaleString("ru-RU")} ${unit.startsWith("₸") ? "₸" : "%"}${unit.startsWith("₸") && unit.length > 1 ? " (" + unit.slice(2) + ")" : ""}`);
+      const val = kind === "pct1" ? Math.round((1 + v / 100) * 1000) / 1000 : kind === "pct0" ? Math.round(v * 10) / 1000 : v;
+      const ks = key.split("."); let o = json; for (let j = 0; j < ks.length - 1; j++) o = o[ks[j]] = o[ks[j]] || {}; o[ks.at(-1)] = val;
+    }
+  }
+  const q = (n) => (document.querySelector(`input[name=${n}]:checked`) || {}).value || "не отвечено";
+  const head = ["Цены для конструктора кухни LUXE INTERIOR", meta.who.value ? "От: " + meta.who.value : ""].filter(Boolean);
+  const tail = ["", "ВОПРОСЫ", `Показывать цену до замера: ${q("q1")}`, `Комплектация по умолчанию: ${meta.q2.value || "не указано"}`, `Смета в PDF: ${q("q3")}`, meta.note.value ? "Комментарий: " + meta.note.value : ""].filter((x) => x !== "");
+  return { json, text: [...head, ...lines, ...tail].join("\n"), missing };
+}
+function toast(m) { const t = $("#toast"); t.textContent = m; t.classList.add("on"); setTimeout(() => t.classList.remove("on"), 2200); }
+$("#copy").onclick = async () => { const c = collect(); try { await navigator.clipboard.writeText(c.text); toast("Скопировано, вставьте в сообщение"); } catch { prompt("Скопируйте текст", c.text); } };
+$("#dl").onclick = () => { const c = collect(); const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(c.json, null, 2)], { type: "application/json" })); a.download = "luxe-prices.json"; a.click(); toast("Файл сохранён"); };
+$("#wa").onclick = () => {
+  const c = collect();
+  if (c.missing.length > 8 && !confirm(`Не заполнено ${c.missing.length} полей. Отправить как есть?`)) return;
+  window.open("https://wa.me/?text=" + encodeURIComponent(c.text), "_blank", "noopener");
+};
+progress();
+</script>
+</body>
+</html>
